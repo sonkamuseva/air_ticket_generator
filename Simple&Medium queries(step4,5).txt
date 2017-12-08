@@ -1,0 +1,40 @@
+---SIMPLE QUERIES---
+
+SELECT airline_id AS "id", airline_name AS "Airline name", fleet_size AS "Fleet size"
+FROM airlines 
+ORDER BY fleet_size DESC;
+/* Shows all airlines sorted by fleet size */
+
+SELECT airport_id AS "id", airport_name AS "Aiport name"
+FROM airports
+WHERE city='Moscow';
+/* Shows all airports in Moscow */
+
+SELECT DISTINCT ON (manufacturer) manufacturer AS "Manufacturers of planes" 
+FROM planes;
+/* Shows the list of aircraft manufacturers */
+
+SELECT customer AS "Customer name", number_of_tickets AS "Number of tickets"  
+FROM reservation 
+WHERE number_of_tickets > 1;
+/* Shows names of the customers who reserved more than one ticket */
+
+---MEDIUM QUERIES---
+
+SELECT flights.flight_number AS "Flight number", flights.date_of_flight AS "Date of flight", planes.model AS "Model of plane", airlines.airline_name AS "Airline" 
+FROM flights INNER JOIN planes ON flights.plane_id=planes.plane_id INNER JOIN airlines ON flights.airline_id=airlines.airline_id
+WHERE flights.date_of_flight='15-Nov-2017';
+/* Shows all flights on November 15, 2017 with information about the airline operating and aircraft model */
+
+SELECT planes.model AS "Airline fleet"
+FROM airlines INNER JOIN planes_airlines_relation USING (airline_id) INNER JOIN planes USING (plane_id)
+WHERE airlines.airline_name='Utair'
+ORDER BY planes.count_of_places DESC;
+/* Shows the fleet of the selected airline (Utair), sorted by passenger capacity */
+ 
+
+SELECT planes.model AS "Model of plane", count(*) AS number_of_operations
+FROM planes INNER JOIN aiports_planes_relation USING (plane_id) INNER JOIN airports USING (airport_id)
+GROUP BY planes.model
+ORDER BY number_of_operations DESC;
+/* Shows popularity of a certain model in aircraft maintenance by airports, sorted by number of operations */
