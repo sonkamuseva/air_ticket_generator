@@ -1,0 +1,37 @@
+
+---COMPLICATED QUERIES---
+
+
+SELECT a.airline_name AS "Airline", count(t.ticket_id) AS "Number of return tickets"
+FROM tickets AS t RIGHT JOIN flights AS f ON (t.flight_id=f.flight_id AND possible_to_return=TRUE) 
+RIGHT JOIN airlines AS a ON f.airline_id=a.airline_id
+GROUP BY a.airline_name
+ORDER BY "Number of return tickets" DESC;
+
+/* Shows the names of airlines and the number of return tickets they sold */
+
+
+SELECT airports.airport_name AS "Airport", count(a_a_r.airline_id) AS "Number of airlines"
+FROM airports INNER JOIN airports_airlines_relation AS a_a_r 
+ON (airports.airport_id=a_a_r.airport_id AND airports.active=TRUE)
+INNER JOIN airlines ON (airlines.airline_id=a_a_r.airline_id AND airlines.number_of_destinations > 
+(SELECT AVG(number_of_destinations) FROM airlines))
+GROUP BY airports.airport_name
+ORDER BY "Number of airlines" DESC;
+
+/* Shows the active airports names with numbers of airlines they serve, whose numbers of destinations is above the average, sorted by these values */
+
+
+SELECT p.manufacturer AS "Manufacturer", count(f.plane_id) AS "Number of planes"
+FROM planes AS p 
+JOIN flights AS f USING (plane_id)
+JOIN airlines AS a ON (a.airline_id=f.airline_id AND a.international=TRUE)
+GROUP BY p.manufacturer
+HAVING count(f.plane_id)=(SELECT MAX("Number of planes")
+FROM (SELECT p.manufacturer AS "Manufacturer", count(f.plane_id) AS "Number of planes"
+FROM planes AS p 
+JOIN flights AS f USING (plane_id)
+JOIN airlines AS a ON (a.airline_id=f.airline_id AND a.international=TRUE)
+GROUP BY p.manufacturer) AS foo);
+
+/* Shows the most popular manufacturer(s) among international airlines with the number(s) of operated aircraft of these airlines. If there are several such manufacturers, all these ones are shown */
