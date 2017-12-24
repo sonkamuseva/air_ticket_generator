@@ -3,18 +3,29 @@
 
 SELECT round((SELECT AVG(number)
 FROM 
-(SELECT count(a_p_r.plane_id) AS "number" FROM airports AS a INNER JOIN airports_planes_relation AS a_p_r ON (a.airport_id=a_p_r.airport_id AND a.international=TRUE) GROUP BY a.airport_name) AS foo) - (SELECT AVG(number)
+(SELECT count(a_p_r.plane_id) AS "number" 
+FROM airports AS a INNER JOIN airports_planes_relation AS a_p_r 
+ON (a.airport_id=a_p_r.airport_id AND a.international=TRUE) 
+GROUP BY a.airport_name) AS foo) - (SELECT AVG(number)
 FROM 
-(SELECT count(a_p_r.plane_id) AS "number" FROM airports AS a INNER JOIN airports_planes_relation AS a_p_r ON (a.airport_id=a_p_r.airport_id AND a.international=FALSE) GROUP BY a.airport_name) AS fooo)) AS "The difference";
+(SELECT count(a_p_r.plane_id) AS "number" 
+FROM airports AS a INNER JOIN airports_planes_relation AS a_p_r 
+ON (a.airport_id=a_p_r.airport_id AND a.international=FALSE) 
+GROUP BY a.airport_name) AS fooo)) 
+AS "The difference";
 
 
 2. Shows the airline, which contains more models of aircraft by Boeing in its fleet, than the other airlines. If there are more than one, shows all of these.
 
 
 SELECT a.airline_name, count(p_a_r.plane_id) AS number
-FROM planes AS p JOIN planes_airlines_relation AS p_a_r ON (p.plane_id=p_a_r.plane_id AND p.manufacturer='Boeing Commercial Airplanes') JOIN airlines AS a USING (airline_id) 
+FROM planes AS p JOIN planes_airlines_relation AS p_a_r 
+ON (p.plane_id=p_a_r.plane_id AND p.manufacturer='Boeing Commercial Airplanes') 
+JOIN airlines AS a USING (airline_id) 
 GROUP BY a.airline_name
 HAVING count(p_a_r.plane_id)=(SELECT MAX(number)
 FROM (SELECT a.airline_name, count(p_a_r.plane_id) AS number
-FROM planes AS p JOIN planes_airlines_relation AS p_a_r ON (p.plane_id=p_a_r.plane_id AND p.manufacturer='Boeing Commercial Airplanes') JOIN airlines AS a USING (airline_id) 
+FROM planes AS p JOIN planes_airlines_relation AS p_a_r 
+ON (p.plane_id=p_a_r.plane_id AND p.manufacturer='Boeing Commercial Airplanes') 
+JOIN airlines AS a USING (airline_id) 
 GROUP BY a.airline_name) AS foo);
